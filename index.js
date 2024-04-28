@@ -26,7 +26,24 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
+
+    // Create database and collection objects
+    const tourismCollection = client.db("spotsDB").collection("spots");
+
+    // routes
+
+    app.get("/touristspots", async (req, res) => {
+      const cursor = await tourismCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/touristspots", async (req, res) => {
+      const spots = req.body;
+      const result = await tourismCollection.insertOne(spots);
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -34,12 +51,10 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
-
-// Routes
 
 app.get("/", (req, res) => {
   res.send("Server is running");
