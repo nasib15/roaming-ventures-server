@@ -43,13 +43,25 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await tourismCollection.findOne(query);
-      console.log(result)
       res.send(result);
     });
 
     app.post("/touristspots", async (req, res) => {
       const spots = req.body;
       const result = await tourismCollection.insertOne(spots);
+      res.send(result);
+    });
+
+    app.put("/touristspots/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedData = { $set: req.body };
+      const result = await tourismCollection.updateOne(
+        query,
+        updatedData,
+        options
+      );
       res.send(result);
     });
     // Send a ping to confirm a successful connection
