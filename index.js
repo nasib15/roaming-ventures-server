@@ -29,27 +29,34 @@ async function run() {
     // await client.connect();
 
     // Create database and collection objects
-    const tourismCollection = client.db("spotsDB").collection("spots");
+    const touristsCollection = client.db("spotsDB").collection("spots");
+    const countriesCollection = client.db("spotsDB").collection("countries");
 
     // routes
 
     app.get("/touristspots", async (req, res) => {
-      const cursor = await tourismCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
+      const touristSpotsCursor = await touristsCollection.find();
+      const countriesCursor = await countriesCollection.find();
+      const touristSpotsResult = await touristSpotsCursor.toArray();
+      res.send(touristSpotsResult);
+      res.send(countriesCursor);
     });
 
     app.get("/touristspots/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await tourismCollection.findOne(query);
-      res.send(result);
+      const touristSpotsResult = await touristsCollection.findOne(query);
+      const countriesResult = await countriesCollection.findOne(query);
+      res.send(touristSpotsResult);
+      res.send(countriesResult);
     });
 
     app.post("/touristspots", async (req, res) => {
       const spots = req.body;
-      const result = await tourismCollection.insertOne(spots);
-      res.send(result);
+      const touristSpotsResult = await touristsCollection.insertOne(spots);
+      const countriesResult = await countriesCollection.insertOne(spots);
+      res.send(touristSpotsResult);
+      res.send(countriesResult);
     });
 
     app.put("/touristspots/:id", async (req, res) => {
@@ -57,19 +64,27 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updatedData = { $set: req.body };
-      const result = await tourismCollection.updateOne(
+      const touristSpotsResult = await touristsCollection.updateOne(
         query,
         updatedData,
         options
       );
-      res.send(result);
+      const countriesResult = await countriesCollection.updateOne(
+        query,
+        updatedData,
+        options
+      );
+      res.send(touristSpotsResult);
+      res.send(countriesResult);
     });
 
     app.delete("/touristspots/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await tourismCollection.deleteOne(query);
-      res.send(result);
+      const touristSpotsResult = await touristsCollection.deleteOne(query);
+      const countriesResult = await countriesCollection.deleteOne(query);
+      res.send(touristSpotsResult);
+      res.send(countriesResult);
     });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
